@@ -9,11 +9,11 @@ import java.util.Random;
 public class Kmeans {
     private ArrayList<Point> data;
     private ArrayList<Centroid> centroids;
-    private HashMap<Centroid, ArrayList<Point>> clusters;
+    private final HashMap<Centroid, ArrayList<Point>> clusters;
     private Color[] colors = new Color[]{Color.BLUE, Color.BLACK, Color.GREEN};
-    private Graph graph = new Graph(500, 500, 10);
-    private int dataDimension;
-    private int k;
+    private final Graph graph = new Graph(500, 500, 10);
+    private final int dataDimension;
+    private final int k;
 
     public Kmeans(int k, int dataDimension) {
         this.dataDimension = dataDimension;
@@ -64,17 +64,19 @@ public class Kmeans {
         }
         if (classificationChanged) {
             // compute new values for centroids
-            for (Centroid centroid : centroids) {
-                double[] newAttributes = new double[dataDimension];
-                for (Point point : clusters.get(centroid)) {
-                    for (int i = 0; i < point.getAttributes().length; i++) {
-                        newAttributes[i] += point.getAttributes()[i];
+            for (Centroid centroid : clusters.keySet()) {
+                if (!clusters.get(centroid).isEmpty()) {
+                    double[] newAttributes = new double[dataDimension];
+                    for (Point point : clusters.get(centroid)) {
+                        for (int i = 0; i < point.getAttributes().length; i++) {
+                            newAttributes[i] += point.getAttributes()[i];
+                        }
                     }
+                    for (int i = 0; i < newAttributes.length; i++) {
+                        newAttributes[i] /= clusters.get(centroid).size();
+                    }
+                    centroid.setAttributes(newAttributes);
                 }
-                for (int i = 0; i < newAttributes.length; i++) {
-                    newAttributes[i] /= clusters.get(centroid).size();
-                }
-                centroid.setAttributes(newAttributes);
             }
         }
         return classificationChanged;
@@ -114,7 +116,6 @@ public class Kmeans {
             }
         }
         clusters.get(centroids.get(0)).addAll(data); // initially put all point in cluster 0
-
         graph.repaint();
     }
 

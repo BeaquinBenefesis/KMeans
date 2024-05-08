@@ -12,9 +12,8 @@ public class Point {
             throw new RuntimeException("Centroid size != attributes size");
         }
         double sum = 0;
-        for (int i = 1; i < attributes.length; i++) {
-            sum += attributes[i] - centroid.getAttributes()[i];
-            sum = Math.pow(sum, 2);
+        for (int i = 0; i < attributes.length; i++) {
+            sum += Math.pow(attributes[i] - centroid.getAttributes()[i], 2);
         }
         return Math.sqrt(sum);
     }
